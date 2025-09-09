@@ -1,0 +1,15 @@
+{
+  "tasks": [
+    { "ref": "A", "title": "A: Design", "durationDays": 3 },
+    { "ref": "B", "title": "B: Backend", "durationDays": 5 },
+    { "ref": "C", "title": "C: Frontend", "durationDays": 4 },
+    { "ref": "D", "title": "D: Integration", "durationDays": 2 }
+  ],
+  "dependencies": [
+    { "dependency": "A", "dependent": "B" },
+    { "dependency": "A", "dependent": "C" },
+    { "dependency": "B", "dependent": "D" },
+    { "dependency": "C", "dependent": "D" }
+  ],
+  "deletions": ["C"]
+}

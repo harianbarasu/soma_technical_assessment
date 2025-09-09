@@ -8,7 +8,49 @@ datasource db {
 }
 
 model Todo {
-  id        Int      @id @default(autoincrement())
-  title     String
-  createdAt DateTime  @default(now())
+  id            String    @id @default(cuid())
+  title         String
+  description   String?
+  durationDays  Int       @default(1)
+  dueDate       DateTime?
+  imageUrl      String?
+  completed     Boolean   @default(false)
+  
+  // Dependencies
+  dependencies  TodoDependency[] @relation("DependentTodo")
+  dependents    TodoDependency[] @relation("DependencyTodo")
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  completedAt   DateTime?
+  
+  // Computed fields for critical path
+  earliestStart DateTime?
+  earliestFinish DateTime?
+  latestStart   DateTime?
+  latestFinish  DateTime?
+  criticalPath  Boolean   @default(false)
+  
+  // Performance
+  position      Float     @default(0)
+  
+  @@index([dueDate])
+  @@index([position])
+}
+
+model TodoDependency {
+  id           String   @id @default(cuid())
+  
+  dependentId  String
+  dependent    Todo     @relation("DependentTodo", fields: [dependentId], references: [id], onDelete: Cascade)
+  
+  dependencyId String
+  dependency   Todo     @relation("DependencyTodo", fields: [dependencyId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  
+  @@unique([dependentId, dependencyId])
+  @@index([dependentId])
+  @@index([dependencyId])
 }

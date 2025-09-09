@@ -52,4 +52,43 @@ Implement a task dependency system that allows tasks to depend on other tasks. T
 2. Push your changes to a public GitHub repository.
 3. Submit a link to your repository in the application form.
 
+
+### Solution:
+
+- How it works:
+  - Data model:
+    - `Todo` includes `dueDate`, `imageUrl`, `durationDays` (estimated effort), and computed fields: `earliestStart`, `earliestFinish`, `latestStart`, `latestFinish`, `criticalPath`.
+    - `TodoDependency` stores edges with cascade delete and a unique constraint per dependent/dependency pair.
+  - Scheduling (weighted critical path):
+    - Forward pass: ES = max(EF of predecessors); EF = ES + effort.
+    - Backward pass: LF = min(LS of successors) or project end for sinks; LS = LF − effort.
+    - Critical tasks have zero slack (LS − ES = 0). All computed values are anchored to “today” and stored as dates for display.
+  - API routes:
+    - `GET /api/todos` returns tasks with dependencies.
+    - `POST /api/todos` creates a task, optionally with `dueDate` and `durationDays`, fetches a Pexels image, then recomputes the schedule.
+    - `PATCH /api/todos/[id]` updates fields (title, due date, effort) and recomputes.
+    - `DELETE /api/todos/[id]` deletes a task and recomputes.
+    - `PUT /api/todos/[id]/dependencies` replaces dependency set, rejects cycles, recomputes.
+    - `POST /api/todos/[id]/image` fetches and sets an image for an existing task.
+  - Graph: Simple SVG layout by topological depth; nodes show Title, Earliest window, Effort, Due date (red if overdue), and critical highlighting.
+
+- Running the demo quickly:
+  - `npm install` and `npx prisma migrate dev` to sync the DB.
+  - Load a realistic scenario: `npm run scenario:load -- scripts/scenarios/engineering_release.json`.
+  - Start: `npm run dev` then open http://localhost:3000.
+
+- Screenshots / recording at `docs/demo.mp4`
+
+## Implementation Notes
+
+- Database: Run `npx prisma migrate dev` to apply the dependency tables and computed fields. Scheduling fields (`earliestStart`, `earliestFinish`, `latestStart`, `latestFinish`, `criticalPath`) are recomputed automatically on task/dependency changes.
+
+ - Estimated Effort and Critical Path: Each task has an estimated effort in days (`durationDays`, default 1). The scheduler computes a weighted critical path using efforts:
+  - ES = max(EF of predecessors), EF = ES + duration
+  - Project end = max(EF)
+  - LF = min(LS of successors) or project end for sinks, LS = LF - duration
+  - Critical tasks are those with zero slack (LS - ES = 0)
+
+
+
 Thanks for your time and effort. We'll be in touch soon!

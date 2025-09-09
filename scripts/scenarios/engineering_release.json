@@ -1,0 +1,38 @@
+{
+  "tasks": [
+    { "ref": "REQ", "title": "Requirements & scope", "durationDays": 2, "dueDate": "+3d" },
+    { "ref": "ARCH", "title": "Architecture design", "durationDays": 3, "dueDate": "+7d" },
+    { "ref": "REPO", "title": "Repo + tooling setup", "durationDays": 1, "dueDate": "+2d" },
+    { "ref": "CI", "title": "CI/CD pipeline", "durationDays": 2, "dueDate": "+6d" },
+    { "ref": "DB", "title": "Database schema", "durationDays": 2, "dueDate": "+8d" },
+    { "ref": "AUTH", "title": "Auth service (backend)", "durationDays": 3, "dueDate": "+12d" },
+    { "ref": "API", "title": "User management API", "durationDays": 2, "dueDate": "+14d" },
+    { "ref": "FE_AUTH", "title": "Frontend auth screens", "durationDays": 3, "dueDate": "+14d" },
+    { "ref": "FE_DASH", "title": "Dashboard UI", "durationDays": 3, "dueDate": "+17d" },
+    { "ref": "INTEG", "title": "Integrate FE with API", "durationDays": 2, "dueDate": "+19d" },
+    { "ref": "E2E", "title": "E2E tests", "durationDays": 3, "dueDate": "+22d" },
+    { "ref": "SEC", "title": "Security review", "durationDays": 2, "dueDate": "+23d" },
+    { "ref": "STAGE", "title": "Staging deployment", "durationDays": 1, "dueDate": "+24d" },
+    { "ref": "PERF", "title": "Performance tuning", "durationDays": 2, "dueDate": "+26d" },
+    { "ref": "PROD", "title": "Production deployment", "durationDays": 1, "dueDate": "+27d" }
+  ],
+  "dependencies": [
+    { "dependency": "REQ", "dependent": "ARCH" },
+    { "dependency": "REQ", "dependent": "REPO" },
+    { "dependency": "REPO", "dependent": "CI" },
+    { "dependency": "ARCH", "dependent": "DB" },
+    { "dependency": "DB", "dependent": "AUTH" },
+    { "dependency": "AUTH", "dependent": "API" },
+    { "dependency": "AUTH", "dependent": "FE_AUTH" },
+    { "dependency": "API", "dependent": "FE_DASH" },
+    { "dependency": "FE_AUTH", "dependent": "INTEG" },
+    { "dependency": "API", "dependent": "INTEG" },
+    { "dependency": "INTEG", "dependent": "E2E" },
+    { "dependency": "CI", "dependent": "STAGE" },
+    { "dependency": "E2E", "dependent": "STAGE" },
+    { "dependency": "STAGE", "dependent": "PERF" },
+    { "dependency": "PERF", "dependent": "PROD" },
+    { "dependency": "SEC", "dependent": "PROD" }
+  ],
+  "deletions": ["E2E", "AUTH"]
+}
